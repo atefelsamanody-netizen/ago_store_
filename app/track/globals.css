@@ -1,0 +1,330 @@
+/* =========================================================
+   A.GO — TRACK PAGE
+========================================================= */
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: #f7f7f5;
+  color: #111;
+  font-family:
+    Arial,
+    Helvetica,
+    sans-serif;
+}
+
+/* =========================================================
+   PAGE
+========================================================= */
+
+.payment-page,
+.track-page {
+  min-height: 100vh;
+}
+
+main {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* =========================================================
+   INPUT
+========================================================= */
+
+input {
+  transition:
+    border-color 0.25s ease,
+    box-shadow 0.25s ease,
+    transform 0.2s ease;
+}
+
+input:focus {
+  border-color: #8b7355 !important;
+
+  box-shadow:
+    0 0 0 4px rgba(139, 115, 85, 0.1);
+
+  outline: none;
+}
+
+input::placeholder {
+  color: #999;
+}
+
+/* =========================================================
+   BUTTONS
+========================================================= */
+
+button {
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.25s ease,
+    opacity 0.2s ease;
+}
+
+button:not(:disabled):hover {
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 8px 20px rgba(0, 0, 0, 0.12);
+}
+
+button:not(:disabled):active {
+  transform: translateY(0);
+}
+
+/* =========================================================
+   ORDER CARDS
+========================================================= */
+
+div[style*="border-radius: 22px"] {
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+div[style*="border-radius: 22px"]:hover {
+  box-shadow:
+    0 18px 45px rgba(0, 0, 0, 0.08) !important;
+}
+
+/* =========================================================
+   PRODUCT CARDS
+========================================================= */
+
+img {
+  transition:
+    transform 0.3s ease,
+    filter 0.3s ease;
+}
+
+div[style*="border-radius: 18px"] img:hover {
+  transform: scale(1.03);
+}
+
+/* =========================================================
+   SCROLLBAR
+========================================================= */
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1ef;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #8b7355;
+  border-radius: 20px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #705c44;
+}
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 700px) {
+
+  body {
+    background: #f7f7f5;
+  }
+
+  main {
+    padding:
+      25px 12px !important;
+  }
+
+  /* Main container */
+
+  main > div {
+    padding:
+      22px 15px !important;
+
+    border-radius:
+      20px !important;
+
+    box-shadow:
+      0 10px 30px
+      rgba(0, 0, 0, 0.06) !important;
+  }
+
+  /* AGO */
+
+  h1[style*="font-size: 90px"] {
+    font-size:
+      58px !important;
+
+    letter-spacing:
+      7px !important;
+  }
+
+  /* Always Go Original */
+
+  p[style*="letter-spacing: 8px"] {
+    font-size:
+      9px !important;
+
+    letter-spacing:
+      4px !important;
+  }
+
+  /* Track title */
+
+  h1[style*="font-size: 38px"] {
+    font-size:
+      27px !important;
+
+    margin-top:
+      16px !important;
+  }
+
+  /* Search */
+
+  div[style*="display: flex"][style*="gap: 15px"] {
+    flex-direction:
+      column !important;
+
+    gap:
+      10px !important;
+  }
+
+  div[style*="display: flex"][style*="gap: 15px"]
+  input {
+    width:
+      100% !important;
+
+    padding:
+      15px !important;
+  }
+
+  div[style*="display: flex"][style*="gap: 15px"]
+  button {
+    width:
+      100% !important;
+
+    min-height:
+      52px !important;
+  }
+
+  /* Customer */
+
+  div[style*="justify-content: space-between"] {
+    align-items:
+      flex-start !important;
+  }
+
+  div[style*="justify-content: space-between"] h2 {
+    font-size:
+      21px !important;
+  }
+
+  /* Status */
+
+  div[style*="background: #8b7355"] {
+    font-size:
+      13px !important;
+
+    padding:
+      9px 15px !important;
+  }
+
+  /* Product */
+
+  div[style*="align-items: center"] img {
+    width:
+      85px !important;
+
+    height:
+      85px !important;
+  }
+
+  div[style*="align-items: center"] {
+    gap:
+      13px !important;
+  }
+
+  /* Product title */
+
+  h4 {
+    font-size:
+      17px !important;
+  }
+
+  /* Product text */
+
+  h4 + p,
+  h4 + p + p,
+  h4 + p + p + p,
+  h4 + p + p + p + p {
+    font-size:
+      13px !important;
+
+    margin-top:
+      7px !important;
+  }
+
+  /* Tracking */
+
+  h3 {
+    font-size:
+      20px !important;
+  }
+
+  /* Footer */
+
+  a[href*="wa.me"] {
+    width:
+      100% !important;
+
+    display:
+      block !important;
+
+    text-align:
+      center !important;
+  }
+}
+
+/* =========================================================
+   VERY SMALL SCREENS
+========================================================= */
+
+@media (max-width: 400px) {
+
+  main {
+    padding:
+      18px 8px !important;
+  }
+
+  main > div {
+    padding:
+      18px 12px !important;
+  }
+
+  h1[style*="font-size: 90px"] {
+    font-size:
+      50px !important;
+  }
+
+  h1[style*="font-size: 38px"] {
+    font-size:
+      24px !important;
+  }
+
+  div[style*="align-items: center"] img {
+    width:
+      72px !important;
+
+    height:
+      72px !important;
+  }
+}
