@@ -50,6 +50,27 @@ type CouponData = {
 };
 
 /* =========================================================
+   MONEY
+========================================================= */
+
+/*
+  كل المبالغ الخاصة بالدفع يتم تقريبها لأقرب 5 جنيه.
+  158.7  -> 160
+  157.2  -> 155
+  162.8  -> 165
+*/
+
+function roundToFive(value: number) {
+  if (!Number.isFinite(value)) return 0;
+
+  return Math.round(value / 5) * 5;
+}
+
+function formatMoney(value: number) {
+  return `${roundToFive(value).toLocaleString("en-US")} جنيه`;
+}
+
+/* =========================================================
    EGYPT GOVERNORATES
 ========================================================= */
 
@@ -521,22 +542,43 @@ export default function CheckoutPage() {
     );
   }, [cart]);
 
+  /*
+    القيمة التي يتم الاعتماد عليها في الحسابات المالية
+    يتم تقريبها لأقرب 5 جنيه.
+  */
+  const paymentBaseTotal =
+    roundToFive(productsTotal);
+
   /* =========================================================
      DISCOUNT
   ========================================================= */
 
-  const discountedProductsTotal = Math.max(
-    productsTotal - couponDiscount,
-    0
+  const safeCouponDiscount = Math.min(
+    Math.max(
+      roundToFive(couponDiscount),
+      0
+    ),
+    paymentBaseTotal
   );
+
+  const discountedProductsTotal =
+    roundToFive(
+      Math.max(
+        paymentBaseTotal -
+          safeCouponDiscount,
+        0
+      )
+    );
 
   /* =========================================================
      SHIPPING
   ========================================================= */
 
-  const shipping = getShippingCost(
-    customer.governorate,
-    customer.city
+  const shipping = roundToFive(
+    getShippingCost(
+      customer.governorate,
+      customer.city
+    )
   );
 
   const locationSelected = Boolean(
@@ -548,17 +590,24 @@ export default function CheckoutPage() {
      PAYMENT
   ========================================================= */
 
-  const deposit = Math.round(
+  const deposit = roundToFive(
     discountedProductsTotal * 0.3
   );
 
-  const remainingProducts = Math.max(
-    discountedProductsTotal - deposit,
-    0
-  );
+  const remainingProducts =
+    roundToFive(
+      Math.max(
+        discountedProductsTotal -
+          deposit,
+        0
+      )
+    );
 
   const finalTotal =
-    discountedProductsTotal + shipping;
+    roundToFive(
+      discountedProductsTotal +
+        shipping
+    );
 
   const amountToPayNow =
     paymentType === "deposit"
@@ -567,7 +616,10 @@ export default function CheckoutPage() {
 
   const amountToCollect =
     paymentType === "deposit"
-      ? remainingProducts + shipping
+      ? roundToFive(
+          remainingProducts +
+            shipping
+        )
       : shipping;
 
   /* =========================================================
@@ -770,14 +822,18 @@ export default function CheckoutPage() {
         "percentage"
       ) {
         discount =
-          (productsTotal * value) / 100;
+          (paymentBaseTotal * value) /
+          100;
       } else {
         discount = value;
       }
 
       discount = Math.min(
-        Math.max(discount, 0),
-        productsTotal
+        Math.max(
+          roundToFive(discount),
+          0
+        ),
+        paymentBaseTotal
       );
 
       if (discount <= 0) {
@@ -792,9 +848,9 @@ export default function CheckoutPage() {
       setCouponApplied(true);
 
       setCouponMessage(
-        `تم تطبيق الخصم: ${discount.toLocaleString(
-          "en-US"
-        )} جنيه`
+        `تم تطبيق الخصم: ${formatMoney(
+          discount
+        )}`
       );
     } catch (error) {
       console.error(
@@ -849,7 +905,7 @@ export default function CheckoutPage() {
       ===================================================== */
 
       let finalCouponDiscount =
-        couponDiscount;
+        safeCouponDiscount;
 
       const cleanCoupon =
         coupon.trim().toUpperCase();
@@ -917,17 +973,23 @@ export default function CheckoutPage() {
           finalCouponDiscount =
             Math.min(
               Math.max(
-                (productsTotal * value) /
-                  100,
+                roundToFive(
+                  (paymentBaseTotal *
+                    value) /
+                    100
+                ),
                 0
               ),
-              productsTotal
+              paymentBaseTotal
             );
         } else {
           finalCouponDiscount =
             Math.min(
-              Math.max(value, 0),
-              productsTotal
+              Math.max(
+                roundToFive(value),
+                0
+              ),
+              paymentBaseTotal
             );
         }
       } else {
@@ -938,29 +1000,40 @@ export default function CheckoutPage() {
          FINAL TOTALS
       ===================================================== */
 
+      const finalPaymentBaseTotal =
+        roundToFive(
+          productsTotal
+        );
+
       const finalDiscountedProductsTotal =
-        Math.max(
-          productsTotal -
-            finalCouponDiscount,
-          0
+        roundToFive(
+          Math.max(
+            finalPaymentBaseTotal -
+              finalCouponDiscount,
+            0
+          )
         );
 
       const finalDeposit =
-        Math.round(
+        roundToFive(
           finalDiscountedProductsTotal *
             0.3
         );
 
       const finalRemainingProducts =
-        Math.max(
-          finalDiscountedProductsTotal -
-            finalDeposit,
-          0
+        roundToFive(
+          Math.max(
+            finalDiscountedProductsTotal -
+              finalDeposit,
+            0
+          )
         );
 
       const finalTotalWithShipping =
-        finalDiscountedProductsTotal +
-        shipping;
+        roundToFive(
+          finalDiscountedProductsTotal +
+            shipping
+        );
 
       const finalAmountToPayNow =
         paymentType === "deposit"
@@ -969,8 +1042,10 @@ export default function CheckoutPage() {
 
       const finalAmountToCollect =
         paymentType === "deposit"
-          ? finalRemainingProducts +
-            shipping
+          ? roundToFive(
+              finalRemainingProducts +
+                shipping
+            )
           : shipping;
 
       /* =====================================================
@@ -983,10 +1058,14 @@ export default function CheckoutPage() {
 
           name: customer.name,
           phone: customer.phone,
+
           governorate:
             customer.governorate,
+
           city: customer.city,
-          address: customer.address,
+
+          address:
+            customer.address,
 
           products: cart.map(
             (item) => ({
@@ -1009,10 +1088,16 @@ export default function CheckoutPage() {
             })
           ),
 
+          /*
+            السعر الأصلي للمنتجات
+          */
+          productsTotal,
+
+          /*
+            الإجمالي المستخدم في الدفع
+          */
           total:
             finalDiscountedProductsTotal,
-
-          productsTotal,
 
           couponCode:
             cleanCoupon
@@ -1061,7 +1146,8 @@ export default function CheckoutPage() {
           paymentMethod:
             null,
 
-          status: "new",
+          status:
+            "new",
         });
 
       /* =====================================================
@@ -1192,17 +1278,9 @@ export default function CheckoutPage() {
   return (
     <main
       className="checkout-page"
-      style={{
-        color: "#000",
-      }}
       dir="rtl"
     >
-      <h1
-        className="checkout-title"
-        style={{
-          color: "#000",
-        }}
-      >
+      <h1 className="checkout-title">
         إتمام الطلب
       </h1>
 
@@ -1212,12 +1290,8 @@ export default function CheckoutPage() {
             CUSTOMER INFO
         ===================================================== */}
 
-        <div
-          className="customer-info"
-          style={{
-            color: "#000",
-          }}
-        >
+        <div className="customer-info">
+
           <h2>
             بيانات العميل
           </h2>
@@ -1244,6 +1318,82 @@ export default function CheckoutPage() {
             }
           />
 
+          {/* =================================================
+              GOVERNORATE + CITY
+          ================================================= */}
+
+          <div className="location-row">
+
+            <select
+              value={
+                customer.governorate
+              }
+              onChange={(e) =>
+                updateCustomer(
+                  "governorate",
+                  e.target.value
+                )
+              }
+            >
+              <option value="">
+                اختر المحافظة
+              </option>
+
+              {Object.keys(
+                EGYPT_GOVERNORATES
+              ).map(
+                (governorate) => (
+                  <option
+                    key={
+                      governorate
+                    }
+                    value={
+                      governorate
+                    }
+                  >
+                    {GOVERNORATE_LABELS[
+                      governorate
+                    ] ||
+                      governorate}
+                  </option>
+                )
+              )}
+            </select>
+
+            <select
+              value={
+                customer.city
+              }
+              disabled={
+                !customer.governorate
+              }
+              onChange={(e) =>
+                updateCustomer(
+                  "city",
+                  e.target.value
+                )
+              }
+            >
+              <option value="">
+                {customer.governorate
+                  ? "اختر المدينة"
+                  : "اختر المحافظة أولاً"}
+              </option>
+
+              {availableCities.map(
+                (city) => (
+                  <option
+                    key={city}
+                    value={city}
+                  >
+                    {city}
+                  </option>
+                )
+              )}
+            </select>
+
+          </div>
+
           <textarea
             rows={4}
             placeholder="العنوان بالتفصيل"
@@ -1257,163 +1407,6 @@ export default function CheckoutPage() {
               )
             }
           />
-        </div>
-
-        {/* =====================================================
-            SHIPPING + COUPON
-            فوق ملخص الطلب
-        ===================================================== */}
-
-        <div className="checkout-extra">
-
-          {/* =========================
-              SHIPPING
-          ========================= */}
-
-          <div className="checkout-shipping-summary">
-
-            <div className="shipping-title">
-              الشحن
-            </div>
-
-            <div className="shipping-selects">
-
-              <select
-                value={
-                  customer.governorate
-                }
-                onChange={(e) =>
-                  updateCustomer(
-                    "governorate",
-                    e.target.value
-                  )
-                }
-              >
-                <option value="">
-                  اختر المحافظة
-                </option>
-
-                {Object.keys(
-                  EGYPT_GOVERNORATES
-                ).map(
-                  (governorate) => (
-                    <option
-                      key={governorate}
-                      value={
-                        governorate
-                      }
-                    >
-                      {GOVERNORATE_LABELS[
-                        governorate
-                      ] ||
-                        governorate}
-                    </option>
-                  )
-                )}
-              </select>
-
-              <select
-                value={
-                  customer.city
-                }
-                disabled={
-                  !customer.governorate
-                }
-                onChange={(e) =>
-                  updateCustomer(
-                    "city",
-                    e.target.value
-                  )
-                }
-              >
-                <option value="">
-                  {customer.governorate
-                    ? "اختر المدينة"
-                    : "اختر المحافظة أولاً"}
-                </option>
-
-                {availableCities.map(
-                  (city) => (
-                    <option
-                      key={city}
-                      value={city}
-                    >
-                      {city}
-                    </option>
-                  )
-                )}
-              </select>
-
-            </div>
-
-            <div className="shipping-price">
-              {locationSelected
-                ? `${shipping.toLocaleString(
-                    "en-US"
-                  )} جنيه`
-                : "اختر المحافظة والمدينة"}
-            </div>
-
-          </div>
-
-          {/* =========================
-              COUPON
-          ========================= */}
-
-          <div className="coupon-box">
-
-            <h3>
-              كود الخصم
-            </h3>
-
-            <div className="coupon-input-row">
-
-              <input
-                placeholder="اكتب كود الخصم"
-                value={coupon}
-                onChange={(e) => {
-                  setCoupon(
-                    e.target.value.toUpperCase()
-                  );
-
-                  setCouponApplied(
-                    false
-                  );
-
-                  setCouponDiscount(
-                    0
-                  );
-
-                  setCouponMessage(
-                    ""
-                  );
-                }}
-              />
-
-              <button
-                type="button"
-                onClick={
-                  applyCoupon
-                }
-              >
-                تطبيق
-              </button>
-
-            </div>
-
-            {couponMessage && (
-              <p
-                className={
-                  couponApplied
-                    ? "coupon-success-message"
-                    : "coupon-error-message"
-                }
-              >
-                {couponMessage}
-              </p>
-            )}
-
-          </div>
 
         </div>
 
@@ -1421,12 +1414,8 @@ export default function CheckoutPage() {
             ORDER SUMMARY
         ===================================================== */}
 
-        <div
-          className="order-summary"
-          style={{
-            color: "#000",
-          }}
-        >
+        <div className="order-summary">
+
           <h2>
             ملخص الطلب
           </h2>
@@ -1440,6 +1429,7 @@ export default function CheckoutPage() {
                 key={`${item.id || item.slug || "item"}-${index}`}
                 className="summary-item"
               >
+
                 <Image
                   src={
                     item.image ||
@@ -1527,6 +1517,72 @@ export default function CheckoutPage() {
 
           <hr />
 
+          {/* =================================================
+              COUPON INSIDE ORDER SUMMARY
+          ================================================= */}
+
+          <div className="coupon-box">
+
+            <h3>
+              كود الخصم
+            </h3>
+
+            <div className="coupon-input-row">
+
+              <input
+                placeholder="اكتب كود الخصم"
+                value={coupon}
+                onChange={(e) => {
+
+                  setCoupon(
+                    e.target.value.toUpperCase()
+                  );
+
+                  setCouponApplied(
+                    false
+                  );
+
+                  setCouponDiscount(
+                    0
+                  );
+
+                  setCouponMessage(
+                    ""
+                  );
+                }}
+              />
+
+              <button
+                type="button"
+                onClick={
+                  applyCoupon
+                }
+              >
+                تطبيق
+              </button>
+
+            </div>
+
+            {couponMessage && (
+              <p
+                className={
+                  couponApplied
+                    ? "coupon-success-message"
+                    : "coupon-error-message"
+                }
+              >
+                {couponMessage}
+              </p>
+            )}
+
+          </div>
+
+          <hr />
+
+          {/* =================================================
+              TOTALS
+          ================================================= */}
+
           <div className="checkout-total-row">
             <span>
               إجمالي المنتجات
@@ -1540,18 +1596,16 @@ export default function CheckoutPage() {
             </strong>
           </div>
 
-          {couponDiscount > 0 && (
-            <div className="checkout-total-row">
+          {safeCouponDiscount > 0 && (
+            <div className="checkout-total-row discount-row">
               <span>
                 الخصم
               </span>
 
               <strong>
-                -{" "}
-                {couponDiscount.toLocaleString(
-                  "en-US"
-                )}{" "}
-                جنيه
+                - {formatMoney(
+                  safeCouponDiscount
+                )}
               </strong>
             </div>
           )}
@@ -1562,26 +1616,44 @@ export default function CheckoutPage() {
             </span>
 
             <strong>
-              {discountedProductsTotal.toLocaleString(
-                "en-US"
-              )}{" "}
-              جنيه
+              {formatMoney(
+                discountedProductsTotal
+              )}
             </strong>
           </div>
+
+          {locationSelected && (
+            <div className="checkout-total-row shipping-total-row">
+              <span>
+                الشحن
+              </span>
+
+              <strong>
+                {formatMoney(
+                  shipping
+                )}
+              </strong>
+            </div>
+          )}
 
           <div className="checkout-total-row final-total">
             <span>
               الإجمالي النهائي
+              {locationSelected && (
+                <small>
+                  شامل الشحن
+                </small>
+              )}
             </span>
 
             <strong>
               {locationSelected
-                ? `${finalTotal.toLocaleString(
-                    "en-US"
-                  )} جنيه`
-                : `${discountedProductsTotal.toLocaleString(
-                    "en-US"
-                  )} جنيه`}
+                ? formatMoney(
+                    finalTotal
+                  )
+                : formatMoney(
+                    discountedProductsTotal
+                  )}
             </strong>
           </div>
 
@@ -1597,7 +1669,15 @@ export default function CheckoutPage() {
             طريقة الدفع
           </h2>
 
-          <label className="payment-option">
+          {/* FULL PAYMENT */}
+
+          <label
+            className={`payment-option ${
+              paymentType === "full"
+                ? "active"
+                : ""
+            }`}
+          >
 
             <input
               type="radio"
@@ -1613,34 +1693,41 @@ export default function CheckoutPage() {
               }
             />
 
-            <div>
+            <div className="payment-option-content">
 
               <strong>
                 💳 الدفع بالكامل
               </strong>
 
               <p>
-                ستدفع الآن :{" "}
-                {discountedProductsTotal.toLocaleString(
-                  "en-US"
-                )}{" "}
-                جنيه
+                الآن:{" "}
+                {formatMoney(
+                  discountedProductsTotal
+                )}
               </p>
 
               <p>
-                عند الاستلام :{" "}
+                عند الاستلام:{" "}
                 {locationSelected
-                  ? `${shipping.toLocaleString(
-                      "en-US"
-                    )} جنيه للشحن`
-                  : "يتم حساب الشحن بعد اختيار المحافظة والمدينة"}
+                  ? formatMoney(
+                      shipping
+                    ) + " شحن"
+                  : "يتم حساب الشحن"}
               </p>
 
             </div>
 
           </label>
 
-          <label className="payment-option">
+          {/* DEPOSIT */}
+
+          <label
+            className={`payment-option ${
+              paymentType === "deposit"
+                ? "active"
+                : ""
+            }`}
+          >
 
             <input
               type="radio"
@@ -1656,27 +1743,26 @@ export default function CheckoutPage() {
               }
             />
 
-            <div>
+            <div className="payment-option-content">
 
               <strong>
                 💰 دفع عربون 30%
               </strong>
 
               <p>
-                ستدفع الآن :{" "}
-                {deposit.toLocaleString(
-                  "en-US"
-                )}{" "}
-                جنيه
+                الآن:{" "}
+                {formatMoney(
+                  deposit
+                )}
               </p>
 
               <p>
-                عند الاستلام :{" "}
+                عند الاستلام:{" "}
                 {locationSelected
-                  ? `${amountToCollect.toLocaleString(
-                      "en-US"
-                    )} جنيه`
-                  : "يتم حساب المبلغ بعد اختيار المحافظة والمدينة"}
+                  ? formatMoney(
+                      amountToCollect
+                    )
+                  : "يتم حساب المبلغ"}
               </p>
 
             </div>
@@ -1695,10 +1781,9 @@ export default function CheckoutPage() {
               </span>
 
               <strong>
-                {amountToPayNow.toLocaleString(
-                  "en-US"
-                )}{" "}
-                جنيه
+                {formatMoney(
+                  amountToPayNow
+                )}
               </strong>
             </div>
 
@@ -1708,15 +1793,12 @@ export default function CheckoutPage() {
               </span>
 
               <strong>
-                {(
+                {formatMoney(
                   paymentType ===
-                  "deposit"
+                    "deposit"
                     ? remainingProducts
                     : 0
-                ).toLocaleString(
-                  "en-US"
-                )}{" "}
-                جنيه
+                )}
               </strong>
             </div>
 
@@ -1727,23 +1809,23 @@ export default function CheckoutPage() {
 
               <strong>
                 {locationSelected
-                  ? `${shipping.toLocaleString(
-                      "en-US"
-                    )} جنيه`
+                  ? formatMoney(
+                      shipping
+                    )
                   : "—"}
               </strong>
             </div>
 
-            <div>
+            <div className="collection-row">
               <span>
                 التحصيل عند الاستلام
               </span>
 
               <strong>
                 {locationSelected
-                  ? `${amountToCollect.toLocaleString(
-                      "en-US"
-                    )} جنيه`
+                  ? formatMoney(
+                      amountToCollect
+                    )
                   : "—"}
               </strong>
             </div>
