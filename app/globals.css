@@ -10757,3 +10757,255 @@ svg,
     font-size: 9px;
   }
 }
+/* =========================================================
+   PAYMENT OPTIONS - MOBILE FIX
+========================================================= */
+
+.payment-box {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.payment-option {
+  position: relative !important;
+
+  width: 100% !important;
+  min-height: 145px !important;
+  height: auto !important;
+
+  box-sizing: border-box !important;
+
+  margin: 14px 0 !important;
+  padding: 22px 58px 20px 70px !important;
+
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+
+  direction: rtl !important;
+
+  border: 1px solid #d0d0d0 !important;
+  border-radius: 18px !important;
+
+  background: #fff !important;
+
+  overflow: hidden !important;
+
+  cursor: pointer;
+}
+
+/* الراديو */
+.payment-option input[type="radio"] {
+  position: absolute !important;
+
+  right: 18px !important;
+  left: auto !important;
+
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+
+  width: 24px !important;
+  height: 24px !important;
+
+  margin: 0 !important;
+
+  flex: 0 0 24px !important;
+}
+
+/* محتوى المربع */
+.payment-option > div {
+  width: 100% !important;
+  min-width: 0 !important;
+
+  display: flex !important;
+  flex-direction: column !important;
+
+  align-items: flex-start !important;
+  justify-content: center !important;
+
+  text-align: right !important;
+
+  direction: rtl !important;
+
+  overflow: visible !important;
+}
+
+/* عنوان الدفع */
+.payment-option strong {
+  display: block !important;
+
+  width: 100% !important;
+
+  margin: 0 0 10px !important;
+
+  font-size: 20px !important;
+  line-height: 1.5 !important;
+
+  font-weight: 700 !important;
+
+  color: #000 !important;
+
+  white-space: normal !important;
+  word-break: normal !important;
+  overflow-wrap: normal !important;
+}
+
+/* التفاصيل */
+.payment-option p {
+  display: block !important;
+
+  width: 100% !important;
+
+  margin: 4px 0 !important;
+
+  font-size: 15px !important;
+  line-height: 1.7 !important;
+
+  color: #222 !important;
+
+  white-space: normal !important;
+  word-break: normal !important;
+  overflow-wrap: normal !important;
+}
+
+/* =========================================================
+   ICONS
+========================================================= */
+
+.payment-option::before {
+  position: absolute;
+
+  left: 18px;
+  right: auto;
+
+  top: 50%;
+
+  transform: translateY(-50%);
+
+  font-size: 30px;
+
+  line-height: 1;
+}
+
+/* كارت الدفع بالكامل */
+.payment-option:first-of-type::before {
+  content: "💳";
+}
+
+/* العربون */
+.payment-option:last-of-type::before {
+  content: "💰";
+}
+
+
+/* =========================================================
+   SELECTED OPTION
+========================================================= */
+
+.payment-option:has(input[type="radio"]:checked) {
+  border-color: #bdbdbd !important;
+  background: #fff !important;
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 600px) {
+
+  .payment-box {
+    width: 100% !important;
+
+    padding-left: 14px !important;
+    padding-right: 14px !important;
+
+    box-sizing: border-box !important;
+  }
+
+  .payment-box h2 {
+    font-size: 22px !important;
+
+    margin: 22px 0 14px !important;
+
+    text-align: right !important;
+  }
+
+  .payment-option {
+    width: 100% !important;
+
+    min-height: 130px !important;
+
+    margin: 12px 0 !important;
+
+    padding: 18px 55px 18px 62px !important;
+
+    border-radius: 17px !important;
+
+    box-sizing: border-box !important;
+  }
+
+  .payment-option input[type="radio"] {
+    right: 16px !important;
+
+    width: 22px !important;
+    height: 22px !important;
+  }
+
+  .payment-option strong {
+    font-size: 18px !important;
+
+    line-height: 1.5 !important;
+
+    margin-bottom: 7px !important;
+  }
+
+  .payment-option p {
+    font-size: 14px !important;
+
+    line-height: 1.7 !important;
+
+    margin: 2px 0 !important;
+  }
+
+  .payment-option::before {
+    left: 16px !important;
+
+    font-size: 26px !important;
+  }
+}
+
+
+/* =========================================================
+   VERY SMALL PHONES
+========================================================= */
+
+@media (max-width: 390px) {
+
+  .payment-option {
+    min-height: 125px !important;
+
+    padding: 16px 52px 16px 55px !important;
+  }
+
+  .payment-option strong {
+    font-size: 17px !important;
+  }
+
+  .payment-option p {
+    font-size: 13px !important;
+  }
+
+  .payment-option input[type="radio"] {
+    right: 14px !important;
+
+    width: 21px !important;
+    height: 21px !important;
+  }
+
+  .payment-option::before {
+    left: 13px !important;
+
+    font-size: 24px !important;
+  }
+}
