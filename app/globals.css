@@ -9925,3 +9925,162 @@ svg,
   border-color: #000 !important;
   box-shadow: 0 6px 25px rgba(0,0,0,0.3) !important;
 }
+.checkout-page,
+.checkout-page * {
+  box-sizing: border-box;
+}
+
+.checkout-page {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+.checkout-grid {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.customer-info,
+.checkout-extra,
+.order-summary,
+.payment-box,
+.coupon-box,
+.checkout-shipping-summary {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.summary-item {
+  width: 100%;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.summary-info {
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.summary-info h4,
+.summary-info p,
+.summary-price,
+.checkout-total-row span,
+.checkout-total-row strong,
+.payment-option,
+.payment-option div,
+.payment-option p,
+.checkout-payment-summary span,
+.checkout-payment-summary strong {
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.coupon-input-row {
+  width: 100%;
+  display: flex;
+  gap: 10px;
+}
+
+.coupon-input-row input {
+  min-width: 0;
+  width: 100%;
+}
+
+.coupon-input-row button {
+  flex-shrink: 0;
+}
+
+.shipping-selects {
+  width: 100%;
+  display: flex;
+  gap: 10px;
+}
+
+.shipping-selects select {
+  min-width: 0;
+  width: 100%;
+  max-width: 100%;
+}
+
+.checkout-payment-summary {
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.checkout-payment-summary > div {
+  width: 100%;
+  min-width: 0;
+}
+
+.checkout-payment-summary strong {
+  text-align: left;
+}
+
+@media (max-width: 600px) {
+  .checkout-page {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  .checkout-grid {
+    width: 100%;
+  }
+
+  .shipping-selects {
+    flex-direction: column;
+  }
+
+  .shipping-selects select {
+    width: 100%;
+  }
+
+  .coupon-input-row {
+    width: 100%;
+  }
+
+  .coupon-input-row input {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .coupon-input-row button {
+    flex-shrink: 0;
+  }
+
+  .summary-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .summary-item img {
+    flex-shrink: 0;
+  }
+
+  .summary-price {
+    flex-shrink: 0;
+    font-size: 13px;
+  }
+
+  .payment-option {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .payment-option p {
+    white-space: normal;
+  }
+
+  .confirm-order {
+    width: 100%;
+    max-width: 100%;
+  }
+}
